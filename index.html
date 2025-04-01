@@ -149,7 +149,26 @@
     <script src="./assets/index.js.pobrane"></script>
     <script src="./assets/manifest.js.pobrane"></script>
     
+<script>
+document.getElementById("formularz").addEventListener("submit", function(event) {
+    event.preventDefault(); // Zatrzymuje domyślne wysyłanie formularza
 
+    // Pobieramy imię z pola formularza
+    let imie = document.getElementById("imie").value;
+
+    // Sprawdzamy, czy pole imienia jest wypełnione
+    if (!imie) {
+        alert("Proszę wpisać imię!");
+        return;
+    }
+
+    // Tworzymy URL z danymi
+    let queryString = `?imie=${encodeURIComponent(imie)}`;
+
+    // Przenosimy użytkownika do card.html z imieniem
+    window.location.href = "card.html" + queryString;
+});
+</script>
 
 
     
