@@ -219,7 +219,7 @@
                 </div>
                 <div class="additional_grid" style="border-bottom: none;">
                     <p class="additional_title">Data zameldowania na pobyt stały</p>
-                    <p class="additional_subtitle home_date"></p>
+                    <p class="additional_subtitle" id="registrationDate"></p>
                 </div>
             </div>
         </div>
@@ -404,6 +404,9 @@
                 document.getElementById('adress').innerHTML = formattedAdress;
             }
             if (data.pesel) document.getElementById('pesel').textContent = data.pesel;
+            if (data.registrationDate) {
+                document.getElementById('registrationDate').textContent = decodeURIComponent(data.registrationDate);
+            }
             if (data.photo) {
                 const photoUrl = decodeURIComponent(data.photo);
                 document.querySelector('.id_own_image').style.backgroundImage = `url('${photoUrl}')`;
