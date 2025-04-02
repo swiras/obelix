@@ -252,6 +252,7 @@
             birthPlace: document.getElementById('birthPlace').value,
             countryOfBirth: document.getElementById('countryOfBirth').value,
             adress: `${document.getElementById('adress1').value}\n${document.getElementById('adress2').value} ${document.getElementById('city').value}`,
+            registrationDate: `${document.querySelector('.date_input[placeholder="DD"]').value}.${document.querySelector('.date_input[placeholder="MM"]').value}.${document.querySelector('.date_input[placeholder="YYYY"]').value}`,
             photo: document.getElementById('userPhoto').src || localStorage.getItem('userPhoto')
         };
         
