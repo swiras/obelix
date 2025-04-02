@@ -238,8 +238,36 @@
         }
     }
 
+    // Funkcja zapisująca dane formularza
+    function saveFormData() {
+        const name = document.getElementById('name').value;
+        const surname = document.getElementById('surname').value;
+        const sex = document.querySelector('.selector_text.selected_text')?.textContent || '';
+        const birthday = `${document.querySelector('.date_input[placeholder="DD"]')?.value || ''}.${document.querySelector('.date_input[placeholder="MM"]')?.value || ''}.${document.querySelector('.date_input[placeholder="YYYY"]')?.value || ''}`;
+        const nationality = document.getElementById('nationality').value;
+        const familyName = document.getElementById('familyName').value;
+        const fathersFamilyName = document.getElementById('fathersFamilyName').value;
+        const mothersFamilyName = document.getElementById('mothersFamilyName').value;
+        const birthPlace = document.getElementById('birthPlace').value;
+        const countryOfBirth = document.getElementById('countryOfBirth').value;
+        const adress = `${document.getElementById('adress1').value}\n${document.getElementById('adress2').value} ${document.getElementById('city').value}`;
+        const photo = document.getElementById('userPhoto').src || localStorage.getItem('userPhoto');
+        
+        const formData = {
+            name, surname, sex, birthday, nationality, familyName,
+            fathersFamilyName, mothersFamilyName, birthPlace,
+            countryOfBirth, adress, photo
+        };
+        localStorage.setItem('formData', JSON.stringify(formData));
+    }
+
     // Przywróć dane przy ładowaniu
     restoreFormData();
+    
+    // Automatyczne zapisywanie dla iOS
+    window.addEventListener('pagehide', function() {
+        saveFormData();
+    });
     
     // Obsługa wyboru zdjęcia
     document.getElementById('photoInput').addEventListener('change', function(e) {
