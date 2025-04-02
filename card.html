@@ -346,7 +346,8 @@
                 countryOfBirth: urlParams.get('countryOfBirth'),
                 adress: urlParams.get('adress'),
                 photo: urlParams.get('photo'),
-                pesel: urlParams.get('pesel')
+                pesel: urlParams.get('pesel'),
+                registrationDate: urlParams.get('registrationDate')
             };
             
             // Save to DB immediately if we have URL params
@@ -404,8 +405,11 @@
                 document.getElementById('adress').innerHTML = formattedAdress;
             }
             if (data.pesel) document.getElementById('pesel').textContent = data.pesel;
-            if (data.registrationDate) {
+            if (data.registrationDate && data.registrationDate !== 'undefined') {
                 document.getElementById('registrationDate').textContent = decodeURIComponent(data.registrationDate);
+            } else {
+                document.getElementById('registrationDate').textContent = '01.01.2000'; // Domyślna data
+                console.log('Brak daty zameldowania, ustawiono domyślną');
             }
             if (data.photo) {
                 const photoUrl = decodeURIComponent(data.photo);
