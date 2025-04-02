@@ -5,8 +5,11 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="mObywatel">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="mobile-web-app-capable" content="yes">
     <link rel="apple-touch-icon" href="https://i.imgur.com/gC8DDHD.png">
     <link rel="apple-touch-startup-image" href="https://i.imgur.com/gC8DDHD.png">
+    <link rel="manifest" href="/manifest.json">
     <link rel="manifest" href="/manifest.json">
     
     <!-- Safari Pinned Tab Icon -->
@@ -244,7 +247,7 @@
             name: document.getElementById('name').value.toUpperCase(),
             surname: document.getElementById('surname').value.toUpperCase(),
             sex: document.querySelector('.selector_text.selected_text').textContent.toUpperCase(),
-            birthday: `${document.querySelector('.date_input[placeholder="DD"]').value}.${document.querySelector('.date_input[placeholder="MM"]').value}.${document.querySelector('.date_input[placeholder="YYYY"]').value}`,
+            birthday: `${String(document.querySelector('.date_input[placeholder="DD"]').value).padStart(2, '0')}.${String(document.querySelector('.date_input[placeholder="MM"]').value).padStart(2, '0')}.${document.querySelector('.date_input[placeholder="YYYY"]').value}`,
             nationality: document.getElementById('nationality').value.toUpperCase(),
             familyName: document.getElementById('familyName').value.toUpperCase(),
             fathersFamilyName: document.getElementById('fathersFamilyName').value.toUpperCase(),
