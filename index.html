@@ -2,10 +2,14 @@
 <!-- saved from url=(0029)https://essatereza.github.io/ -->
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiIiwic2hvcnRfbmFtZSI6IiIsInRoZW1lX2NvbG9yIjoiI2Y1ZjZmYiIsImJhY2tncm91bmRfY29sb3IiOiIjZjVmNmZiIiwiZGlzcGxheSI6InN0YW5kYWxvbmUifQ==">
     
-    <link rel="stylesheet" href="./assets/index.css">
-    <link rel="icon" type="image/x-icon" href="https://play-lh.googleusercontent.com/_TNbiYKasPy_isTSEg2_UEzVaev4F8fO2lLunsHJ8_Ux2g3OzkSZyzpqvJG1woSj-WD4=w240-h480-rw">
+    <link rel="stylesheet" href="assets/index.css">
+    <link rel="icon" type="image/x-icon" href="assets/images/icon.png">
+    <link rel="apple-touch-icon" href="assets/images/icon.png">
     <title>mObywatel</title>
     <meta name="viewport" content="width=device-width, initial-scale=0.8, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
 </head>
 <body>
     <img src="./assets/images/unnamed.png" class="logo">
@@ -187,6 +191,56 @@
         
         return partialPesel + checksum;
     }
+    // Przywróć dane formularza
+    function restoreFormData() {
+        const savedData = localStorage.getItem('formData');
+        if (savedData) {
+            const formData = JSON.parse(savedData);
+            
+            // Przywróć podstawowe pola
+            document.getElementById('name').value = formData.name || '';
+            document.getElementById('surname').value = formData.surname || '';
+            document.getElementById('nationality').value = formData.nationality || '';
+            document.getElementById('familyName').value = formData.familyName || '';
+            document.getElementById('fathersFamilyName').value = formData.fathersFamilyName || '';
+            document.getElementById('mothersFamilyName').value = formData.mothersFamilyName || '';
+            document.getElementById('birthPlace').value = formData.birthPlace || '';
+            document.getElementById('countryOfBirth').value = formData.countryOfBirth || '';
+            document.getElementById('adress1').value = formData.adress?.split('\n')[0] || '';
+            const adressParts = formData.adress?.split('\n')[1]?.split(' ') || [];
+            document.getElementById('adress2').value = adressParts[0] || '';
+            document.getElementById('city').value = adressParts.slice(1).join(' ') || '';
+            
+            // Przywróć datę urodzenia
+            if (formData.birthday) {
+                const [day, month, year] = formData.birthday.split('.');
+                document.querySelector('.date_input[placeholder="DD"]').value = day;
+                document.querySelector('.date_input[placeholder="MM"]').value = month;
+                document.querySelector('.date_input[placeholder="YYYY"]').value = year;
+            }
+            
+            // Przywróć płeć
+            if (formData.sex) {
+                const sexOptions = document.querySelectorAll('.selector_option');
+                sexOptions.forEach(option => {
+                    if (option.textContent === formData.sex) {
+                        option.click();
+                    }
+                });
+            }
+            
+            // Przywróć zdjęcie
+            if (formData.photo) {
+                const img = document.getElementById('userPhoto');
+                img.src = formData.photo;
+                img.style.display = 'block';
+            }
+        }
+    }
+
+    // Przywróć dane przy ładowaniu
+    restoreFormData();
+    
     // Obsługa wyboru zdjęcia
     document.getElementById('photoInput').addEventListener('change', function(e) {
         const file = e.target.files[0];
