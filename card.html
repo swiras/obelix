@@ -234,10 +234,104 @@
         </div>
     </div>
 
-  
-    
+    <script>
+    // Funkcja do konwersji zdjęcia na czarno-białe
+    function convertToGrayscale(imageData) {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = imageData.width;
+        canvas.height = imageData.height;
+        ctx.putImageData(imageData, 0, 0);
+        
+        const imageDataBW = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageDataBW.data;
+        
+        for (let i = 0; i < data.length; i += 4) {
+            const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+            data[i] = avg; // R
+            data[i + 1] = avg; // G
+            data[i + 2] = avg; // B
+        }
+        
+        ctx.putImageData(imageDataBW, 0, 0);
+        return canvas.toDataURL('image/jpeg');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Przywróć dane z localStorage i URL
+        const savedPESEL = localStorage.getItem('userPESEL');
+        if (savedPESEL) {
+            document.getElementById('pesel').textContent = savedPESEL;
+        }
+
+        const savedData = localStorage.getItem('formData');
+        if (savedData) {
+            const formData = JSON.parse(savedData);
+            document.getElementById('name').textContent = formData.name;
+            document.getElementById('surname').textContent = formData.surname;
+            document.getElementById('sex').textContent = formData.sex;
+            document.getElementById('birthday').textContent = formData.birthday;
+            document.getElementById('nationality').textContent = formData.nationality;
+            document.getElementById('familyName').textContent = formData.familyName;
+            document.getElementById('fathersFamilyName').textContent = formData.fathersFamilyName;
+            document.getElementById('mothersFamilyName').textContent = formData.mothersFamilyName;
+            document.getElementById('birthPlace').textContent = formData.birthPlace;
+            document.getElementById('countryOfBirth').textContent = formData.countryOfBirth;
+            document.getElementById('adress').textContent = formData.adress;
+            
+            // Ustaw zdjęcie z localStorage lub URL
+            const photo = formData.photo || urlParams.get('photo');
+            if (photo) {
+                const photoUrl = decodeURIComponent(photo);
+                document.querySelector('.id_own_image').style.backgroundImage = `url('${photoUrl}')`;
+                localStorage.setItem('userPhoto', photoUrl);
+            }
+        }
+
+        // Pobierz wszystkie parametry URL
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Sprawdź parametry URL dla zdjęcia
+        const photoUrl = urlParams.get('photo');
+        if (photoUrl) {
+            document.querySelector('.id_own_image').style.backgroundImage = `url('${decodeURIComponent(photoUrl)}')`;
+            localStorage.setItem('userPhoto', decodeURIComponent(photoUrl));
+        }
+        
+        // Pobierz wszystkie dane z URL
+        const name = urlParams.get('name');
+        const surname = urlParams.get('surname');
+        const sex = urlParams.get('sex');
+        const birthday = urlParams.get('birthday');
+        const nationality = urlParams.get('nationality');
+        const familyName = urlParams.get('familyName');
+        const fathersFamilyName = urlParams.get('fathersFamilyName');
+        const mothersFamilyName = urlParams.get('mothersFamilyName');
+        const birthPlace = urlParams.get('birthPlace');
+        const countryOfBirth = urlParams.get('countryOfBirth');
+        const adress = urlParams.get('adress');
+        
+        // Wypełnij wszystkie dane
+        if (name) document.getElementById('name').textContent = decodeURIComponent(name);
+        if (surname) document.getElementById('surname').textContent = decodeURIComponent(surname);
+        if (sex) document.getElementById('sex').textContent = decodeURIComponent(sex);
+        if (birthday) document.getElementById('birthday').textContent = decodeURIComponent(birthday);
+        if (nationality) document.getElementById('nationality').textContent = decodeURIComponent(nationality);
+        if (familyName) document.getElementById('familyName').textContent = decodeURIComponent(familyName);
+        if (fathersFamilyName) document.getElementById('fathersFamilyName').textContent = decodeURIComponent(fathersFamilyName);
+        if (mothersFamilyName) document.getElementById('mothersFamilyName').textContent = decodeURIComponent(mothersFamilyName);
+        if (birthPlace) document.getElementById('birthPlace').textContent = decodeURIComponent(birthPlace);
+        if (countryOfBirth) document.getElementById('countryOfBirth').textContent = decodeURIComponent(countryOfBirth);
+        if (adress) {
+            const formattedAdress = decodeURIComponent(adress).replace(/\n/g, '<br>');
+            document.getElementById('adress').innerHTML = formattedAdress;
+        }
+    });
+    </script>
     
     <script src="assets/bar.js"></script>
     <script src="assets/card.js"></script>
     <script src="assets/manifest.js"></script>
+
+
 </body>
