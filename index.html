@@ -241,9 +241,9 @@
     // Data Persistence Solution
     function saveFormData() {
         const formData = {
-            name: document.getElementById('name').value.toUpperCase(),
-            surname: document.getElementById('surname').value.toUpperCase(),
-            sex: document.querySelector('.selector_text.selected_text').textContent.toUpperCase(),
+            name: document.getElementById('name').value,
+            surname: document.getElementById('surname').value,
+            sex: document.querySelector('.selector_text.selected_text').textContent,
             birthday: `${document.querySelector('.date_input[placeholder="DD"]').value}.${document.querySelector('.date_input[placeholder="MM"]').value}.${document.querySelector('.date_input[placeholder="YYYY"]').value}`,
             nationality: document.getElementById('nationality').value,
             familyName: document.getElementById('familyName').value,
@@ -251,8 +251,8 @@
             mothersFamilyName: document.getElementById('mothersFamilyName').value,
             birthPlace: document.getElementById('birthPlace').value,
             countryOfBirth: document.getElementById('countryOfBirth').value,
-            adress: `UL. ${document.getElementById('adress1').value.toUpperCase()}\n${document.getElementById('adress2').value} ${document.getElementById('city').value.toUpperCase()}`,
-            registrationDate: `${String(document.querySelector('.date_input[placeholder="DD"]').value).padStart(2, '0')}.${String(document.querySelector('.date_input[placeholder="MM"]').value).padStart(2, '0')}.${document.querySelector('.date_input[placeholder="YYYY"]').value}`,
+            adress: `${document.getElementById('adress1').value}\n${document.getElementById('adress2').value} ${document.getElementById('city').value}`,
+            registrationDate: `${document.querySelector('.date_input[placeholder="DD"]').value}.${document.querySelector('.date_input[placeholder="MM"]').value}.${document.querySelector('.date_input[placeholder="YYYY"]').value}`,
             photo: document.getElementById('userPhoto').src || localStorage.getItem('userPhoto')
         };
         
