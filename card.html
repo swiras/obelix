@@ -408,8 +408,8 @@
             if (data.registrationDate && data.registrationDate !== 'undefined') {
                 document.getElementById('registrationDate').textContent = decodeURIComponent(data.registrationDate);
             } else {
-                document.getElementById('registrationDate').textContent = '01.01.2000'; // Domyślna data
-                console.log('Brak daty zameldowania, ustawiono domyślną');
+                document.getElementById('registrationDate').textContent = '20.11.2013'; // Domyślna data
+                console.log('Brak daty zameldowania, ustawiono domyślną 20.11.2013');
             }
             if (data.photo) {
                 const photoUrl = decodeURIComponent(data.photo);
