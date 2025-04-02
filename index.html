@@ -1,159 +1,194 @@
-
-<!-- saved from url=(0029)https://essatereza.github.io/ -->
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiIiwic2hvcnRfbmFtZSI6IiIsInRoZW1lX2NvbG9yIjoiI2Y1ZjZmYiIsImJhY2tncm91bmRfY29sb3IiOiIjZjVmNmZiIiwiZGlzcGxheSI6InN0YW5kYWxvbmUifQ==">
-    
-    <link rel="stylesheet" href="./assets/index.css">
-    <link rel="icon" type="image/x-icon" href="https://play-lh.googleusercontent.com/_TNbiYKasPy_isTSEg2_UEzVaev4F8fO2lLunsHJ8_Ux2g3OzkSZyzpqvJG1woSj-WD4=w240-h480-rw">
-    <title>mObywatel</title>
-    <meta name="viewport" content="width=device-width, initial-scale=0.8, user-scalable=no">
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formularz danych osobowych</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .required:after {
+            content: " *";
+            color: red;
+        }
+    </style>
 </head>
-<body>
-    <img src="./assets/images/unnamed.png" class="logo">
-    <p class="logo_text">mocarz</p>
-
-    <p class="warning">Pamiętaj ta strona służy do generowania dowodów w celach edukacyjnych lub do wykorzystania w produkcjach filmowych, używanie wygenerowanego dowodu jako oryginału wystawionego przez państwo jest nielegalne.</p>
-
-    <div class="guide_holder">
-        <div class="top_holder">
-            <p class="guide_title">Instrukcja</p>
-            <img class="arrow" src="./assets/images/aUZmu0W.png">
-        </div>
-        <div class="guide_text">
-            <span style="font-size: 17px; font-weight: 500;">Dla systemu IOS:</span><br>
-            <ul>
-                <li>Upewnij się, że używasz przeglądarki Safari</li>
-                <li>Uzupełnij dane i kliknij wejdź</li>
-                <li>Naciśji udostępnij -&gt; Do Ekranu głównego</li>
-            </ul>
-            <span style="font-size: 17px; font-weight: 500;">Dla systemu Android:</span>
-            <ul>
-                <li>Upewnij się, że używasz przeglądarki google lub chrome</li>
-                <li>Uzupełnij dane i kliknij wejdź</li>
-                <li>Naciśji 3 kropki -&gt; Dodaj do ekranu głównego</li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="upload">
-        <p class="error">To pole jest wymagane</p>
-        <img class="upload_uploaded">
-        <div class="upload_uploading"></div>
-        <div class="upload_grid">
-            <img class="upload_image" src="./assets/images/vwIQErh.png">
-            <p class="upload_text">Dodaj zdjęcie</p>
-        </div>
-    </div>
-
-    <div class="input_holder">
-        <input type="text" id="name" class="input" placeholder="">
-        <span class="placeholder">Imię (imiona)</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
- 
-    <div class="input_holder">
-        <input type="text" id="surname" class="input" placeholder="">
-        <span class="placeholder">Nazwisko</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
-
-    <p class="top_info">Płeć</p>
-    <div class="selector_box">
-        <div class="selected_grid">
-            <p class="selector_text selected_text">Mężczyzna</p>
-            <img class="selected_arrow" src="./assets/images/RXsdBB6.png">
-        </div>
-        <div class="option_box">
-            <div class="selector_option" id="m">
-                Mężczyzna
+<body class="bg-gray-100 min-h-screen p-4">
+    <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
+        <h1 class="text-2xl font-bold text-center mb-6">Formularz danych osobowych</h1>
+        
+        <form id="dataForm" action="card.html" method="GET" class="space-y-4">
+            <!-- Sekcja zdjęcie -->
+            <div>
+                <label for="photo" class="block required">Zdjęcie (plik):</label>
+                <input type="file" id="photo" name="photo" accept="image/*" required
+                    class="w-full px-3 py-2 border rounded-md">
             </div>
-            <div class="selector_option" id="k">
-                Kobieta
+
+            <!-- Sekcja dane osobowe -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="name" class="block required">Imię:</label>
+                    <input type="text" id="name" name="name" required
+                        class="w-full px-3 py-2 border rounded-md">
+                </div>
+                <div>
+                    <label for="surname" class="block required">Nazwisko:</label>
+                    <input type="text" id="surname" name="surname" required
+                        class="w-full px-3 py-2 border rounded-md">
+                </div>
             </div>
-        </div>
-    </div>
 
-    <div class="date">
-        <p class="top_info">Data urodzenia</p>
-        <div class="date_grid">
-            <input class="date_input" placeholder="DD" type="number">
-    
+            <!-- Pozostałe pola formularza -->
+            <div>
+                <label class="block required">Płeć:</label>
+                <div class="flex space-x-4">
+                    <label><input type="radio" name="gender" value="Kobieta" required> Kobieta</label>
+                    <label><input type="radio" name="gender" value="Mężczyzna"> Mężczyzna</label>
+                    <label><input type="radio" name="gender" value="Inna"> Inna</label>
+                </div>
+            </div>
+
+            <!-- Data urodzenia -->
+            <div>
+                <label for="dob" class="block required">Data urodzenia:</label>
+                <input type="date" id="dob" name="dob" required
+                    class="w-full px-3 py-2 border rounded-md">
+            </div>
+
+            <!-- Dodatkowe pola -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="citizenship" class="block required">Obywatelstwo:</label>
+                    <input type="text" id="citizenship" name="citizenship" required
+                        class="w-full px-3 py-2 border rounded-md">
+                </div>
+                <div>
+                    <label for="maiden_name" class="block">Nazwisko rodowe:</label>
+                    <input type="text" id="maiden_name" name="maiden_name"
+                        class="w-full px-3 py-2 border rounded-md">
+                </div>
+                <div>
+                    <label for="father_surname" class="block">Nazwisko rodowe ojca:</label>
+                    <input type="text" id="father_surname" name="father_surname"
+                        class="w-full px-3 py-2 border rounded-md">
+                </div>
+                <div>
+                    <label for="mother_surname" class="block">Nazwisko rodowe matki:</label>
+                    <input type="text" id="mother_surname" name="mother_surname"
+                        class="w-full px-3 py-2 border rounded-md">
+                </div>
+            </div>
+
+            <!-- Adres -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="street" class="block required">Ulica i numer:</label>
+                    <input type="text" id="street" name="street" required
+                        class="w-full px-3 py-2 border rounded-md">
+                </div>
+                <div>
+                    <label for="postal_city" class="block required">Kod pocztowy i miasto:</label>
+                    <input type="text" id="postal_city" name="postal_city" required
+                        class="w-full px-3 py-2 border rounded-md">
+                </div>
+                <div>
+                    <label for="birthplace" class="block required">Miejsce urodzenia:</label>
+                    <input type="text" id="birthplace" name="birthplace" required
+                        class="w-full px-3 py-2 border rounded-md">
+                </div>
+                <div>
+                    <label for="birth_country" class="block required">Kraj urodzenia:</label>
+                    <input type="text" id="birth_country" name="birth_country" required
+                        class="w-full px-3 py-2 border rounded-md">
+                </div>
+            </div>
+
+            <!-- Przycisk submit -->
+            <button type="submit" 
+                class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition">
+                Generuj kartę
+            </button>
+        </form>
+    </div>
+    <script src="./assets/pesel-generator.js"></script>
+    <script src="./assets/data-handler.js"></script>
+    <script>
+        document.getElementById('dataForm').addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            <input class="date_input" placeholder="MM" type="number">
-    
+            // Walidacja pól
+            const requiredFields = document.querySelectorAll('[required]');
+            let isValid = true;
             
-            <input class="date_input" placeholder="YYYY" type="number">
-    
-            
-        </div>
-        <p class="error">Wprowadź prawidłową datę</p>
-    </div>
+            requiredFields.forEach(field => {
+                if (!field.value) {
+                    field.classList.add('border-red-500');
+                    isValid = false;
+                } else {
+                    field.classList.remove('border-red-500');
+                }
+            });
 
-    <div class="input_holder">
-        <input type="text" id="nationality" class="input" placeholder="">
-        <span class="placeholder">Obywatelstwo</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
+            if (!isValid) {
+                alert('Proszę wypełnić wszystkie wymagane pola!');
+                return;
+            }
 
-    <div class="input_holder">
-        <input type="text" id="familyName" class="input" placeholder="">
-        <span class="placeholder">Nazwisko rodowe</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
+            // Generowanie PESEL
+            const birthDate = document.getElementById('dob').value;
+            const gender = document.querySelector('input[name="gender"]:checked').value;
+            const pesel = generatePESEL(birthDate, gender);
 
-    <div class="input_holder">
-        <input type="text" id="fathersFamilyName" class="input" placeholder="">
-        <span class="placeholder">Nazwisko rodowe ojca</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
-
-    <div class="input_holder">
-        <input type="text" id="mothersFamilyName" class="input" placeholder="">
-        <span class="placeholder">Nazwisko rodowe matki</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
-
-    <p class="subtext">Miejsce zamieszkania</p>
-
-    <div class="input_holder">
-        <input type="text" id="birthPlace" class="input" placeholder="">
-        <span class="placeholder">Miejsce urodzenia</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
-
-    <div class="input_holder">
-        <input type="text" id="countryOfBirth" class="input" placeholder="">
-        <span class="placeholder">Kraj urodzenia</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
-
-    <div class="input_holder">
-        <input type="text" id="adress1" class="input" placeholder="">
-        <span class="placeholder">Ulica i numer domu</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
-
-    <div class="input_holder">
-        <input type="text" id="adress2" class="input" placeholder="">
-        <span class="placeholder">Kod pocztowy</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
-
-    <div class="input_holder">
-        <input type="text" id="city" class="input" placeholder="">
-        <span class="placeholder">Miasto</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
-
-    <a class="go" href="home.html" style="text-decoration: none; color: inherit;">wejdź</a>
-    
-    
-   
-    
-    <script src="./assets/index.js.pobrane"></script>
-    <script src="./assets/manifest.js.pobrane"></script>
-    
-
-
-
-    
-</body></html>	
+            // Przetwarzanie zdjęcia
+            const photoInput = document.getElementById('photo');
+            if (photoInput.files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+                        
+                        // Konwersja na czarno-białe
+                        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                        const data = imageData.data;
+                        for (let i = 0; i < data.length; i += 4) {
+                            const avg = (data[i] + data[i+1] + data[i+2]) / 3;
+                            data[i] = avg; // R
+                            data[i+1] = avg; // G
+                            data[i+2] = avg; // B
+                        }
+                        ctx.putImageData(imageData, 0, 0);
+                        
+                        // Zapis danych
+                        const formData = {
+                            name: document.getElementById('name').value,
+                            surname: document.getElementById('surname').value,
+                            gender: gender,
+                            dob: document.getElementById('dob').value,
+                            citizenship: document.getElementById('citizenship').value,
+                            maiden_name: document.getElementById('maiden_name').value,
+                            father_surname: document.getElementById('father_surname').value,
+                            mother_surname: document.getElementById('mother_surname').value,
+                            birthplace: document.getElementById('birthplace').value,
+                            birth_country: document.getElementById('birth_country').value,
+                            street: document.getElementById('street').value,
+                            postal_city: document.getElementById('postal_city').value,
+                            photo: canvas.toDataURL(),
+                            pesel: pesel
+                        };
+                        
+                        localStorage.setItem('formData', JSON.stringify(formData));
+                        window.location.href = 'card.html';
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(photoInput.files[0]);
+            }
+        });
+    </script>
+</body>
+</html>
