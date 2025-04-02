@@ -1,6 +1,10 @@
 
 <!-- saved from url=(0029)https://essatereza.github.io/ -->
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiIiwic2hvcnRfbmFtZSI6IiIsInRoZW1lX2NvbG9yIjoiI2Y1ZjZmYiIsImJhY2tncm91bmRfY29sb3IiOiIjZjVmNmZiIiwiZGlzcGxheSI6InN0YW5kYWxvbmUifQ==">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- PWA Configuration -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="manifest" href="/manifest.json">
     
     <link rel="stylesheet" href="./assets/index.css">
     <link rel="icon" type="image/x-icon" href="https://play-lh.googleusercontent.com/_TNbiYKasPy_isTSEg2_UEzVaev4F8fO2lLunsHJ8_Ux2g3OzkSZyzpqvJG1woSj-WD4=w240-h480-rw">
@@ -148,8 +152,26 @@
     <a class="go" href="#" style="text-decoration: none; color: inherit;">wejdź</a>
     
     <script src="./assets/index.js.pobrane"></script>
-    <script src="./assets/manifest.js.pobrane"></script>
     <script>
+    // Service Worker Registration
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(registration => {
+                    console.log('ServiceWorker registration successful');
+                })
+                .catch(err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+        });
+    }
+
+    // iOS Standalone Detection
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (isIOS && window.navigator.standalone) {
+        document.documentElement.classList.add('ios-standalone');
+    }
     // Funkcja generująca PESEL
     function generatePESEL(birthday, sex) {
         // Data w formacie DD.MM.YYYY
@@ -202,42 +224,64 @@
         }
     });
 
-    document.querySelector('.go').addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Pobierz wszystkie dane z formularza
-            const name = document.getElementById('name').value;
-            const surname = document.getElementById('surname').value;
-            const sex = document.querySelector('.selector_text.selected_text').textContent;
-            const birthday = `${document.querySelector('.date_input[placeholder="DD"]').value}.${document.querySelector('.date_input[placeholder="MM"]').value}.${document.querySelector('.date_input[placeholder="YYYY"]').value}`;
-            const nationality = document.getElementById('nationality').value;
-            const familyName = document.getElementById('familyName').value;
-            const fathersFamilyName = document.getElementById('fathersFamilyName').value;
-            const mothersFamilyName = document.getElementById('mothersFamilyName').value;
-            const birthPlace = document.getElementById('birthPlace').value;
-            const countryOfBirth = document.getElementById('countryOfBirth').value;
-            const adress = `${document.getElementById('adress1').value}\n${document.getElementById('adress2').value} ${document.getElementById('city').value}`;
-            
-            // Zapisz dane
-            const photoData = document.getElementById('userPhoto').src || localStorage.getItem('userPhoto');
-            const pesel = generatePESEL(birthday, sex);
-            const formData = {
-                name, surname, sex, birthday, nationality, familyName,
-                fathersFamilyName, mothersFamilyName, birthPlace,
-                countryOfBirth, adress, pesel,
-                photo: photoData
-            };
-            localStorage.setItem('userPESEL', pesel);
-            localStorage.setItem('formData', JSON.stringify(formData));
-            
-            // Przekieruj z aktualnym zdjęciem
-            const photoToSend = document.getElementById('userPhoto').src || localStorage.getItem('userPhoto');
-            if (photoToSend) {
-                localStorage.setItem('userPhoto', photoToSend);
-                window.location.href = `card.html?name=${encodeURIComponent(name)}&surname=${encodeURIComponent(surname)}&sex=${encodeURIComponent(sex)}&birthday=${encodeURIComponent(birthday)}&nationality=${encodeURIComponent(nationality)}&familyName=${encodeURIComponent(familyName)}&fathersFamilyName=${encodeURIComponent(fathersFamilyName)}&mothersFamilyName=${encodeURIComponent(mothersFamilyName)}&birthPlace=${encodeURIComponent(birthPlace)}&countryOfBirth=${encodeURIComponent(countryOfBirth)}&adress=${encodeURIComponent(adress)}&pesel=${encodeURIComponent(pesel)}&photo=${encodeURIComponent(photoToSend)}`;
-            } else {
-                alert('Proszę dodać zdjęcie przed kontynuacją');
+    // Data Persistence Solution
+    function saveFormData() {
+        const formData = {
+            name: document.getElementById('name').value,
+            surname: document.getElementById('surname').value,
+            sex: document.querySelector('.selector_text.selected_text').textContent,
+            birthday: `${document.querySelector('.date_input[placeholder="DD"]').value}.${document.querySelector('.date_input[placeholder="MM"]').value}.${document.querySelector('.date_input[placeholder="YYYY"]').value}`,
+            nationality: document.getElementById('nationality').value,
+            familyName: document.getElementById('familyName').value,
+            fathersFamilyName: document.getElementById('fathersFamilyName').value,
+            mothersFamilyName: document.getElementById('mothersFamilyName').value,
+            birthPlace: document.getElementById('birthPlace').value,
+            countryOfBirth: document.getElementById('countryOfBirth').value,
+            adress: `${document.getElementById('adress1').value}\n${document.getElementById('adress2').value} ${document.getElementById('city').value}`,
+            photo: document.getElementById('userPhoto').src || localStorage.getItem('userPhoto')
+        };
+        
+        // Save to both localStorage and sessionStorage as fallback
+        localStorage.setItem('formDataBackup', JSON.stringify(formData));
+        sessionStorage.setItem('formData', JSON.stringify(formData));
+        
+        return formData;
+    }
+
+    function loadFormData() {
+        const data = JSON.parse(localStorage.getItem('formDataBackup') || sessionStorage.getItem('formData') || '{}');
+        if (data.name) {
+            document.getElementById('name').value = data.name;
+            document.getElementById('surname').value = data.surname;
+            // ... wypełnij pozostałe pola ...
+            if (data.photo) {
+                const img = document.getElementById('userPhoto');
+                img.src = data.photo;
+                img.style.display = 'block';
             }
-        });
+        }
+    }
+
+    // Load saved data on page load
+    document.addEventListener('DOMContentLoaded', loadFormData);
+
+    document.querySelector('.go').addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Save data and get the complete form data
+        const formData = saveFormData();
+        const pesel = generatePESEL(formData.birthday, formData.sex);
+        
+        // Store additional PESEL data
+        localStorage.setItem('userPESEL', pesel);
+        
+        // Navigate with all data
+        if (formData.photo) {
+            localStorage.setItem('userPhoto', formData.photo);
+            window.location.href = `card.html?name=${encodeURIComponent(formData.name)}&surname=${encodeURIComponent(formData.surname)}&sex=${encodeURIComponent(formData.sex)}&birthday=${encodeURIComponent(formData.birthday)}&nationality=${encodeURIComponent(formData.nationality)}&familyName=${encodeURIComponent(formData.familyName)}&fathersFamilyName=${encodeURIComponent(formData.fathersFamilyName)}&mothersFamilyName=${encodeURIComponent(formData.mothersFamilyName)}&birthPlace=${encodeURIComponent(formData.birthPlace)}&countryOfBirth=${encodeURIComponent(formData.countryOfBirth)}&adress=${encodeURIComponent(formData.adress)}&pesel=${encodeURIComponent(pesel)}&photo=${encodeURIComponent(formData.photo)}`;
+        } else {
+            alert('Proszę dodać zdjęcie przed kontynuacją');
+        }
+    });
         </script>   
 </body></html>	 
