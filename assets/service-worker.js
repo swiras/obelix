@@ -1,12 +1,13 @@
-const CACHE_NAME = 'id-card-cache-v2';
-const urlsToCache = [
+const CACHE_NAME = 'id-card-cache-v3';
+const CORE_ASSETS = [
   '/',
   '/index.html',
   '/card.html',
   '/styles.css',
   '/assets/index.js.pobrane',
   '/manifest.json',
-  '/assets/index.css'
+  '/assets/index.css',
+  'https://i.imgur.com/gC8DDHD.png'
 ];
 
 self.addEventListener('install', event => {
@@ -20,38 +21,43 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('fetch', event => {
-  // Always try to fetch from network first for API/data requests
-  if (event.request.url.includes('?')) {
-    return fetch(event.request);
+  // Skip non-GET requests
+  if (event.request.method !== 'GET') {
+    return;
   }
 
-  event.respondWith(
-    caches.match(event.request)
-      .then(cachedResponse => {
-        // Return cached response if found
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-
-        // Otherwise fetch from network
-        return fetch(event.request)
-          .then(response => {
-            // Cache only important responses
-            if (response && response.status === 200 && response.type === 'basic') {
-              const responseToCache = response.clone();
-              caches.open(CACHE_NAME)
-                .then(cache => cache.put(event.request, responseToCache));
-            }
-            return response;
-          })
-          .catch(() => {
-            // Fallback for HTML pages
-            if (event.request.headers.get('accept').includes('text/html')) {
-              return caches.match('/index.html');
-            }
-          });
-      })
-  );
+  // Handle iOS Safari specifically
+  if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+    // For iOS, serve from cache first, then network
+    event.respondWith(
+      caches.match(event.request)
+        .then(cached => {
+          return cached || fetch(event.request)
+            .then(response => {
+              // Cache the response if it's a core asset
+              if (CORE_ASSETS.some(asset => event.request.url.includes(asset))) {
+                const clone = response.clone();
+                caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+              }
+              return response;
+            });
+        })
+    );
+  } else {
+    // For other browsers, network first then cache
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          // Cache the response if it's a core asset
+          if (CORE_ASSETS.some(asset => event.request.url.includes(asset))) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+  }
 });
 
 // Cache data when app is opened from homescreen
