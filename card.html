@@ -257,12 +257,83 @@
         return canvas.toDataURL('image/jpeg');
     }
 
+    // Initialize IndexedDB
+    function initDB() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open('mObywatelDB', 1);
+            
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                if (!db.objectStoreNames.contains('userData')) {
+                    db.createObjectStore('userData', { keyPath: 'id' });
+                }
+            };
+            
+            request.onsuccess = (event) => {
+                resolve(event.target.result);
+            };
+            
+            request.onerror = (event) => {
+                reject('IndexedDB error: ' + event.target.error);
+            };
+        });
+    }
+
+    // Save data to IndexedDB
+    async function saveToDB(data) {
+        try {
+            const db = await initDB();
+            const tx = db.transaction('userData', 'readwrite');
+            const store = tx.objectStore('userData');
+            
+            // Store all data with timestamp
+            await store.put({
+                id: 'currentUser',
+                ...data,
+                lastUpdated: Date.now()
+            });
+            
+            // Also save to service worker cache as backup
+            if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+                navigator.serviceWorker.controller.postMessage({
+                    type: 'CACHE_DATA',
+                    payload: data
+                });
+            }
+            
+            return true;
+        } catch (error) {
+            console.error('Error saving to DB:', error);
+            return false;
+        }
+    }
+
+    // Load data from IndexedDB
+    async function loadFromDB() {
+        try {
+            const db = await initDB();
+            const tx = db.transaction('userData', 'readonly');
+            const store = tx.objectStore('userData');
+            const request = store.get('currentUser');
+            
+            return new Promise((resolve) => {
+                request.onsuccess = (event) => {
+                    resolve(event.target.result || {});
+                };
+                request.onerror = () => resolve({});
+            });
+        } catch (error) {
+            console.error('Error loading from DB:', error);
+            return {};
+        }
+    }
+
     // Try to get data from multiple sources
-    function loadData() {
+    async function loadData() {
         // 1. Try URL parameters first
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.toString()) {
-            return {
+            const data = {
                 name: urlParams.get('name'),
                 surname: urlParams.get('surname'),
                 sex: urlParams.get('sex'),
@@ -275,22 +346,44 @@
                 countryOfBirth: urlParams.get('countryOfBirth'),
                 adress: urlParams.get('adress'),
                 photo: urlParams.get('photo'),
-                pesel: localStorage.getItem('userPESEL')
+                pesel: urlParams.get('pesel')
             };
+            
+            // Save to DB immediately if we have URL params
+            if (data.name) {
+                await saveToDB(data);
+            }
+            return data;
         }
 
-        // 2. Try service worker cache
-        return caches.match('/app-data')
-            .then(response => response ? response.json() : null)
-            .then(cachedData => {
-                if (cachedData) return cachedData;
+        // 2. Try IndexedDB
+        const dbData = await loadFromDB();
+        if (dbData.name) {
+            return dbData;
+        }
 
-                // 3. Try localStorage and sessionStorage
-                const data = JSON.parse(localStorage.getItem('formDataBackup') || 
-                                      sessionStorage.getItem('formData') || '{}');
-                data.pesel = localStorage.getItem('userPESEL');
-                return data;
-            });
+        // 3. Try service worker cache
+        try {
+            const cachedResponse = await caches.match('/app-data');
+            if (cachedResponse) {
+                const cachedData = await cachedResponse.json();
+                if (cachedData.name) {
+                    await saveToDB(cachedData); // Backup to DB
+                    return cachedData;
+                }
+            }
+        } catch (error) {
+            console.error('Error checking cache:', error);
+        }
+
+        // 4. Fallback to localStorage (temporary)
+        const localStorageData = JSON.parse(localStorage.getItem('formDataBackup') || '{}');
+        if (localStorageData.name) {
+            await saveToDB(localStorageData); // Migrate to DB
+            return localStorageData;
+        }
+
+        return {};
     }
 
     // Display data on page
